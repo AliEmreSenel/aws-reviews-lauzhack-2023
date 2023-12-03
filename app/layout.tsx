@@ -2,10 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
-
-
-const inter = Inter({ subsets: ['latin'] })
+import { Text, Theme } from '@radix-ui/themes';
 
 export const metadata: Metadata = {
     title: 'Amazon Seller Central Replica',
@@ -19,10 +16,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body>
 
-                <header>
-                    <h1>Amazon Seller Central Replica</h1>
+                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                    <Text size="6" weight="bold">Amazon Seller Central Replica</Text>
                 </header>
 
                 <nav>
@@ -33,7 +30,7 @@ export default function RootLayout({
                     <a href="#">Settings</a>
                 </nav>
                 <section>
-                    <Theme accentColor="crimson" grayColor="sand" radius="large" scaling="95%" className="p-4 m-4">
+                    <Theme accentColor="orange" grayColor="sand" radius="large" scaling="95%" className="p-4 m-4">
                         {children}
                     </Theme>
                 </section>
