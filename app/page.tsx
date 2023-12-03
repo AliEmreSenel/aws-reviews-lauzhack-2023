@@ -132,7 +132,7 @@ export default function Home() {
                                             </Box>
                                             <Box className="w-full">
                                                 <Flex direction="column" gap="2">
-                                                    {currentCategory !== "" && (
+                                                    {currentCategory !== "" ? (
                                                         <ScrollArea className="w-full" style={{ height: 500 }}>
                                                             <Table.Root>
                                                                 <Table.Header>
@@ -146,7 +146,7 @@ export default function Home() {
                                                                     {filteredProduct[filteredProduct.findIndex((category) => category.categoryID === currentCategory)].clusters.map((cluster: any) => (
                                                                         //.most_reoccurring.map((word: any) => (
                                                                         <Table.Row key={cluster.clusterID}>
-                                                                            <Table.Cell>Category {cluster.clusterID}</Table.Cell>
+                                                                            <Table.Cell>{cluster.clusterInterpret}</Table.Cell>
                                                                             <Table.Cell className="text-right">
                                                                                 <Button onClick={() => setSelectedReviewTopic(cluster.clusterID)}>
                                                                                     Details
@@ -157,6 +157,12 @@ export default function Home() {
                                                                 </Table.Body>
                                                             </Table.Root>
                                                         </ScrollArea>
+                                                    ) : (
+                                                        <Box className="w-full flex items-center justify-center" style={{ height: 500 }}>
+                                                            <Text size="3" weight="bold" align="center" className="text-gray-500">
+                                                                Select a category for a breakdown of reviews
+                                                            </Text>
+                                                        </Box>
                                                     )}
                                                 </Flex>
                                             </Box>
@@ -168,7 +174,7 @@ export default function Home() {
                                         <Table.Root>
                                             <Table.Header>
                                                 <Table.Row>
-                                                    <Table.ColumnHeaderCell>Reviews for category {selectedReviewTopic}</Table.ColumnHeaderCell>
+                                                    <Table.ColumnHeaderCell>Reviews for {filteredProduct[filteredProduct.findIndex((category) => category.categoryID === currentCategory)].clusters.filter((cluster) => cluster.clusterID === selectedReviewTopic)[0].clusterInterpret}</Table.ColumnHeaderCell>
                                                     <Table.ColumnHeaderCell className="text-right" >Sentiment</Table.ColumnHeaderCell>
                                                 </Table.Row>
                                             </Table.Header>
