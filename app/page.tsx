@@ -1,113 +1,198 @@
-import Image from 'next/image'
+"use client";
+import { Box, Button, Flex, ScrollArea, Table, Tabs, Text } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import { Cell, Pie, PieChart } from "recharts";
 
+const PIE_TABS = [
+    "ALL",
+    "Positive",
+    "Negative"
+];
+
+const ImageGallery = () => {
+    return (
+        <Box className="w-1/2">
+            <Flex direction="row" gap="2">
+                <Flex direction="column" gap="2" >
+                    {
+                        Array.from({ length: 7 }, (_, i) => i + 1).map((_, i) => (
+                            <img src={"https://picsum.photos/65/" + (65 + i)} width="65" height="65" key={i} />
+                        ))
+                    }
+                </Flex >
+                <img src="https://picsum.photos/500/500" width="500" height="500" />
+            </Flex>
+        </Box>
+    )
+}
+
+const RADIAN = Math.PI / 180;
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    const [currentCategory, setCurrentCategory] = useState("");
+    const [hoverCategory, setHoverCategory] = useState("");
+    const [selectedReviewTopic, setSelectedReviewTopic] = useState("");
+    const [selectedTab, setSelectedTab] = useState(PIE_TABS[0]);
+    const [filteredProduct, setFilteredProduct] = useState(null);
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    const [PRODUCT, setPRODUCT] = useState(null);
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        var productId = params.get('productId');
+        fetch("https://def3-192-33-206-199.ngrok-free.app/api/product/" + productId, {
+            headers: {
+                "ngrok-skip-browser-warning": "true"
+            }
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setPRODUCT(data);
+            });
+    }, []);
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+    useEffect(() => {
+        setCurrentCategory("");
+        setSelectedReviewTopic("");
+    }, [selectedTab]);
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+    useEffect(() => {
+        if (PRODUCT) {
+            //@ts-ignore
+            const filteredReviewProduct = PRODUCT.categories.map((category) => ({ ...category, clusters: category.clusters.map((cluster) => ({ ...cluster, reviews: cluster.reviews.filter((review) => selectedTab === "ALL" || (selectedTab === "Positive" && review.sentiment > 0.0) || (selectedTab === "Negative" && review.sentiment < 0.0)) })) }));
+            const filteredReviewProductWithoutEmptyClusters = filteredReviewProduct.map((category) => ({ ...category, clusters: category.clusters.filter((cluster) => cluster.reviews.length > 0) }));
+            const filteredReviewProductWithoutEmptyCategories = filteredReviewProductWithoutEmptyClusters.filter((category) => category.clusters.length > 0);
+            const filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentiment = filteredReviewProductWithoutEmptyCategories.map((category) => ({ ...category, clusters: category.clusters.map((cluster) => ({ ...cluster, clusterSentiment: cluster.reviews.reduce((acc, review) => acc + parseFloat(review.sentiment), 0) / cluster.reviews.length })) }));
+            const filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentiment = filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentiment.map((category) => ({ ...category, categorySentiment: category.clusters.reduce((acc, cluster) => acc + parseFloat(cluster.clusterSentiment), 0) / category.clusters.length }));
+            //            const filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentimentAndProductSentiment = { ...filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentiment, productSentiment: filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentiment.reduce((acc, category) => acc + parseFloat(category.categorySentiment), 0) / filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentiment.length };
+            setFilteredProduct(filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentiment);
+            //            console.log(filteredReviewProductWithoutEmptyCategoriesAndClustersWithClusterSentimentandCategoriesSentimentAndProductSentiment);
+            //            setFilteredProduct(filteredReviewProduct.filter((cluster) => selectedTab === "ALL" || (selectedTab === "Positive" && cluster.clusterSentiment > 0.0) || (selectedTab === "Negative" && cluster.clusterSentiment <= 0.0)));
+        }
+    }, [PRODUCT, selectedTab]);
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+    useEffect(() => {
+        console.log(filteredProduct);
+        console.log(PRODUCT);
+    }, [filteredProduct])
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.60;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        return (
+            <>
+                <text x={x} y={y} fill="black" className="pointer-events-none" textAnchor='middle' dominantBaseline="central">
+                    {filteredProduct[index].categoryID}
+                </text><br />
+                <text x={x} y={y + 15} fill="black" className="pointer-events-none" textAnchor='middle' dominantBaseline="central">
+                    {`${(percent * 100).toFixed(0)}%`}
+                </text >
+            </>
+        );
+    };
+
+    return (
+        <Flex direction="column" gap="2">
+            <Box px="4" className="border-b border-gray-800">
+                <Flex direction="row" gap="2">
+                    <Text size="6" weight="bold">Amazon Reviews</Text>
+                </Flex>
+            </Box>
+            {PRODUCT ? (
+                <Box p="4">
+                    <Flex direction="column" gap="2">
+                        <Text size="6" weight="bold">{PRODUCT.productName}</Text>
+                        <Flex direction="row" gap="2">
+                            <ImageGallery />
+                            <Tabs.Root defaultValue="ALL" className="w-full ps-10">
+                                <Tabs.List>
+                                    {PIE_TABS.map((tab) => (
+                                        <Tabs.Trigger value={tab} key={tab} onClick={() => setSelectedTab(tab)}>
+                                            {tab}
+                                        </Tabs.Trigger>
+                                    ))}
+                                </Tabs.List>
+                                <Box px="2" pt="2" pb="2">
+                                    {(filteredProduct && filteredProduct.length > 0) ? (
+                                        <Flex direction="row" gap="2">
+                                            <Box style={{ width: 500, height: 500 }} className="w-full">
+                                                <PieChart width={500} height={500}>
+                                                    <Pie
+                                                        isAnimationActive={false} cx={250} cy={250} outerRadius={220}
+                                                        labelLine={false}
+                                                        dataKey="value"
+                                                        data={filteredProduct.map((category) => ({ name: category.categoryID, value: category.categorySentiment + 1.0 }))}
+                                                        label={renderCustomizedLabel}
+                                                        fill="#8884d8">
+                                                        {filteredProduct.map((category, index) => (
+                                                            <Cell key={`cell-${index}`} fill={"hsl(" + ((category.categorySentiment + 1) * 60.0) + ", 100%, 50%)"} onClick={() => { setCurrentCategory(category.categoryID); setSelectedReviewTopic("") }} onMouseEnter={() => setHoverCategory(category.categoryID)} onMouseLeave={() => setHoverCategory("")} />
+                                                        ))}
+                                                    </Pie>
+                                                </PieChart>
+                                            </Box>
+                                            <Box className="w-full">
+                                                <Flex direction="column" gap="2">
+                                                    {currentCategory !== "" && (
+                                                        <ScrollArea className="w-full" style={{ height: 500 }}>
+                                                            <Table.Root>
+                                                                <Table.Header>
+                                                                    <Table.Row>
+                                                                        <Table.ColumnHeaderCell>Most Reoccurring for {currentCategory}</Table.ColumnHeaderCell>
+                                                                        <Table.ColumnHeaderCell />
+                                                                    </Table.Row>
+                                                                </Table.Header>
+
+                                                                <Table.Body>
+                                                                    {filteredProduct[filteredProduct.findIndex((category) => category.categoryID === currentCategory)].clusters.map((cluster: any) => (
+                                                                        //.most_reoccurring.map((word: any) => (
+                                                                        <Table.Row key={cluster.clusterID}>
+                                                                            <Table.Cell>Category {cluster.clusterID}</Table.Cell>
+                                                                            <Table.Cell className="text-right">
+                                                                                <Button onClick={() => setSelectedReviewTopic(cluster.clusterID)}>
+                                                                                    Details
+                                                                                </Button>
+                                                                            </Table.Cell>
+                                                                        </Table.Row>
+                                                                    ))}
+                                                                </Table.Body>
+                                                            </Table.Root>
+                                                        </ScrollArea>
+                                                    )}
+                                                </Flex>
+                                            </Box>
+                                        </Flex>
+                                    ) : (
+                                        <Text size="6" weight="bold">No {selectedTab.toLocaleLowerCase()} reviews</Text>
+                                    )}
+                                    {selectedReviewTopic !== "" && (
+                                        <Table.Root>
+                                            <Table.Header>
+                                                <Table.Row>
+                                                    <Table.ColumnHeaderCell>Reviews for category {selectedReviewTopic}</Table.ColumnHeaderCell>
+                                                    <Table.ColumnHeaderCell className="text-right" >Sentiment</Table.ColumnHeaderCell>
+                                                </Table.Row>
+                                            </Table.Header>
+
+                                            <Table.Body>
+                                                {filteredProduct[filteredProduct.findIndex((category) => category.categoryID === currentCategory)].clusters.filter((cluster) => cluster.clusterID === selectedReviewTopic)[0].reviews.map((review) => (
+                                                    <Table.Row key={"review-" + review.Reviews + Math.random()}>
+                                                        <Table.Cell>{review.Reviews}</Table.Cell>
+                                                        <Table.Cell className="text-right">{review.sentiment}</Table.Cell>
+                                                    </Table.Row>
+                                                ))}
+                                            </Table.Body>
+                                        </Table.Root>
+                                    )}
+                                </Box>
+                            </Tabs.Root>
+                        </Flex>
+                    </Flex >
+                </Box >
+            ) : (
+                <Box p="4">
+                    <Text size="6" weight="bold">Loading...</Text>
+                </Box>
+            )}
+        </Flex >
+    )
 }
