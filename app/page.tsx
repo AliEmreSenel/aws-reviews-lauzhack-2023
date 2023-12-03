@@ -95,7 +95,7 @@ export default function Home() {
         <Flex direction="column" gap="2">
             <Box px="4" className="border-b border-gray-800">
                 <Flex direction="row" gap="2">
-                    <Text size="6" weight="bold">Amazon Reviews</Text>
+                    <Text size="6" weight="bold">Reviews</Text>
                 </Flex>
             </Box>
             {PRODUCT ? (

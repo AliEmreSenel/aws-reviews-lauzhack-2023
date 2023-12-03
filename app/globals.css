@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Amazon Ember";
+  src: url("C:\Users\poseidon\Documents\Lauzhack\AWS\Amazon_Typefaces_Complete_Font_Set_Mar2020\Ember\AmazonEmber_Bd.ttf")
+    format("truetype");
+  /* Add more font formats (e.g., woff, woff2) if necessary */
+}
+
+body {
+  font-family: "Amazon Ember", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+header {
+  background-color: #232f3e;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+}
+
+nav {
+  background-color: #333;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  margin-right: 20px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+section {
+  padding: 20px;
+}
+
+footer {
+  background-color: #333;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
 /*:root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
