@@ -35,10 +35,19 @@ export default function Home() {
     const [filteredProduct, setFilteredProduct] = useState(null);
 
     const [PRODUCT, setPRODUCT] = useState(null);
+  const [productList, setProductList] = useState(null);
+    
+    const [productLoadState, setProductLoadState] = useState(0);
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search)
+        if (!params.has('productId')){
+      setProductLoadState(-1);
+    }else{
+      setProductLoadState(1)
+    
         var productId = params.get('productId');
-        fetch("https://def3-192-33-206-199.ngrok-free.app/api/product/" + productId, {
+        fetch("http://localhost:5000/api/product/" + productId, {
             headers: {
                 "ngrok-skip-browser-warning": "true"
             }
@@ -46,8 +55,25 @@ export default function Home() {
             .then((res) => res.json())
             .then((data) => {
                 setPRODUCT(data);
-            });
+            }).catch((err) => {console.error(err); setProductLoadState(-2)})
+    }
     }, []);
+
+    useEffect(() => {
+    if (productLoadState == -1){
+        fetch("http://localhost:5000/api/products", {
+            headers: {
+                "ngrok-skip-browser-warning": "true"
+            }
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setProductList(data)
+          console.log("Loaded product list")
+          console.log(data)
+            }).catch((err) => {console.error(err); setProductLoadState(-2)})
+    }
+  }, [productLoadState])
 
     useEffect(() => {
         setCurrentCategory("");
@@ -99,7 +125,11 @@ export default function Home() {
                     <Text size="6" weight="bold">Reviews</Text>
                 </Flex>
             </Box>
-            {PRODUCT ? (
+          {productLoadState == -2 ? (
+            <Box>
+                <Text size={6} weight={"bold"} color="red">Error while loading product. Please chack that the product actually exists</Text>
+            </Box>
+          ) : PRODUCT ? (
                 <Box p="4">
                     <Flex direction="column" gap="2">
                         <Text size="6" weight="bold">{PRODUCT.productName}</Text>
@@ -195,11 +225,32 @@ export default function Home() {
                         </Flex>
                     </Flex >
                 </Box >
-            ) : (
+            ) : productLoadState == 0 ? (
                 <Box p="4">
                     <Text size="6" weight="bold">Loading...</Text>
                 </Box>
+            ) : productLoadState == -1 ? (
+                <Box p="4">
+                    <Flex direction={"column"} gap="2">
+                    { productList ? 
+                     productList.map((product: any) => (
+                      <Box p="2" key={product}>
+                        <a href={"?productId=" + product}>
+                        <Text size="4">{product}</Text>
+                        </a>
+                      </Box>
+                    )) : (
+<Text size={"4"} weight={"bold"}>Loading product list...</Text>
+                    )
+                    }
+                    </Flex>
+                </Box>
+            ) : (
+              <Box>
+                <Text size={"6"} color="crimson" weight={"bold"}> Invalid State Exception </Text>
+              </Box>
             )}
         </Flex >
+        
     )
 }
